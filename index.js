@@ -2,11 +2,13 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const { v4: uuid } = require("uuid");
+const methodOverride = require('method-override')
 
 // Parse data
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride('_method'))
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
@@ -14,22 +16,22 @@ const comments = [
   {
     id: uuid(),
     username: "Todd",
-    comment: "lol that was so funny",
+    comment: "lololol",
   },
   {
     id: uuid(),
     username: "Jerry",
-    comment: "lol that was so funny",
+    comment: "YEEEER",
   },
   {
     id: uuid(),
     username: "Eddie",
-    comment: "lol that was so funny",
+    comment: "Coding is awesome!",
   },
   {
     id: uuid(),
     username: "Eduar",
-    comment: "lol that was so funny",
+    comment: "Test",
   },
 ];
 
@@ -53,14 +55,20 @@ app.get("/comments/:id", (req, res) => {
   res.render("comments/show", { comment });
 });
 
+app.get("/comments/:id/edit", (req, res) => {
+  const { id } = req.params;
+  const comment = comments.find( c => c.id === id);
+  res.render("comments/edit", { comment });
+});
+
 // PATCH request
 
 app.patch("/comments/:id", (req, res) => {
   const { id } = req.params;
   const newCommentText = req.body.comment;
-  const foundComment = comments.find(c => c.id === id);
+  const foundComment = comments.find((c) => c.id === id);
   foundComment.comment = newCommentText;
-  res.redirect('/comments')
+  res.redirect("/comments");
 });
 
 // POST request
